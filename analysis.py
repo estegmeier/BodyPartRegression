@@ -136,7 +136,7 @@ class MyAggregator(StarAggregator):
         return analysis_results
     
 
-    def has_converged(self, result, last_result, num_iterations):
+    def has_converged(self, result, last_result, num_iterations=None):
         """
         Checks whether the analysis has converged if 'simple_analysis' in 'StarModel' is set to False.
         Always returns True, since only one iteration round is performed.  
@@ -154,6 +154,7 @@ def main():
     parser = argparse.ArgumentParser(description="Run StarModel pipeline with custom analyzer parameters.")
     parser.add_argument("--image_data", type=str, default="images.tar", help="Name of the input images tar file")
     parser.add_argument("--file_endings", nargs="+", default=[".nii", ".nii.gz", ".nrrd"], help="List of file endings to process")
+    parser.add_argument("--query_keys", nargs="*", default=None, help="Optional S3 keys for StarModel query")
 
     argv = sys.argv[1:]
     if len(argv) == 1 and " " in argv[0]:
@@ -162,11 +163,14 @@ def main():
     args, unknown = parser.parse_known_args(argv)
     analyzer_kwargs = {'image_data':args.image_data,
                        'file_endings': args.file_endings}
+    
+    query = args.query_keys if args.query_keys is not None else [args.image_data]
 
     StarModel(
         analyzer=MyAnalyzer,
         aggregator=MyAggregator,
         data_type='s3',
+        query=query,
         simple_analysis=True,
         output_type='pickle',
         analyzer_kwargs=analyzer_kwargs
