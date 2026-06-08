@@ -1,6 +1,8 @@
-# Body Part Regression 
+# FLAME Body Part Regression Analysis
 
-This Docker image runs the **StarModel pipeline** for the body part regression tool. The Body Part Regression (BPR) model maps CT slices to continuous slice scores that increase monotonically from pelvis (0) to head (100), enabling a machine-interpretable representation of anatomy. Trained in a fully self-supervised manner, it supports tasks such as sorting, labeling, and cropping of radiologic images. Pretrained models are available for direct inference on NIfTI and NRRD images.
+This STAR analysis runs the **StarModel pipeline** for the body part regression tool on FLAME. The Body Part Regression (BPR) model maps CT slices to continuous slice scores that increase monotonically from pelvis (0) to head (100), enabling a machine-interpretable representation of anatomy. Trained in a fully self-supervised manner, it supports tasks such as sorting, labeling, and cropping of radiologic images. Pretrained models are available for direct inference on NIfTI and NRRD images.
+
+`../TUTORIAL.md` gives a short walkthrough of this analysis and can be used as a starting point for FLAME homepage or analysis documentation.
 
 ---
 
