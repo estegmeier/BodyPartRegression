@@ -15,14 +15,29 @@ from flame.star import StarAnalyzer, StarAggregator, StarModel
 
 class InputCrawler:
     def __init__(self, file_endings=None):
+        """
+        Initializes the input crawler.
+        :param file_endings: Supported file endings for input detection.
+        """
         self.file_endings = tuple(file_endings or [".dcm", ".nii", ".nii.gz", ".nrrd"])
 
     def sanitize_case_name(self, value):
+        """
+        Creates a filesystem-safe case name.
+        :param value: Raw case identifier.
+        :return: Sanitized case name.
+        """
         value = str(value).strip().replace(" ", "_")
         cleaned = "".join(c if c.isalnum() or c in "._-" else "_" for c in value)
         return cleaned.strip("._-") or "case"
 
     def unique_case_name(self, name, used):
+        """
+        Makes a case name unique within one crawl.
+        :param name: Proposed case name.
+        :param used: Already used case names.
+        :return: Unique case name.
+        """
         if name not in used:
             used.add(name)
             return name
@@ -33,6 +48,11 @@ class InputCrawler:
         return f"{name}_{i}"
 
     def crawl_inputs(self, target_dir):
+        """
+        Collects supported inputs from the extracted data directory.
+        :param target_dir: Extracted input directory.
+        :return: Sorted list of volume files and DICOM series entries.
+        """
         inputs = []
         used_names = set()
         series_map = {}
@@ -111,6 +131,12 @@ class InputCrawler:
         return sorted(inputs, key=lambda x: x["case_name"])
 
     def prepare_inference_input(self, entry, converted_root):
+        """
+        Prepares one crawler entry for inference.
+        :param entry: Volume or DICOM crawler entry.
+        :param converted_root: Directory for temporary converted files.
+        :return: Path to an inference-ready volume.
+        """
         if entry["type"] == "volume":
             return entry["path"]
 
@@ -146,6 +172,12 @@ class InputCrawler:
 
 
 def stage_input_data(data_dict, archive_name, target_dir):
+    """
+    Stages input payloads in the target directory.
+    :param data_dict: Retrieved input payloads.
+    :param archive_name: Preferred archive key.
+    :param target_dir: Output directory for extracted or copied files.
+    """
     os.makedirs(target_dir, exist_ok=True)
 
     items = (
@@ -169,6 +201,11 @@ def stage_input_data(data_dict, archive_name, target_dir):
 
 
 def safe_extract_tar(tar, target_dir):
+    """
+    Extracts a tar archive after checking member paths.
+    :param tar: Open tar archive object.
+    :param target_dir: Extraction target directory.
+    """
     target_dir = os.path.abspath(target_dir)
 
     for member in tar.getmembers():
